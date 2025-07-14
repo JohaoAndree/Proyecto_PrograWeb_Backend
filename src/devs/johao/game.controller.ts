@@ -48,14 +48,21 @@ export const getAllNoticias = async (_req: Request, res: Response) => {
 // Crear una nueva noticia
 export const createNoticia = async (req: Request, res: Response) => {
   try {
-    const { nombre, descripcion, foto } = req.body;
+    const { nombre, descripcion } = req.body;
+    const file = req.file;
+
+    if (!file) {
+      return res.status(400).json({ error: 'No se subió ninguna imagen' });
+    }
+
+    const rutaFoto = `/imagenes/noticia/${file.filename}`;
 
     const nuevaNoticia = await prisma.noticia.create({
       data: {
         titulo: nombre,
         texto: descripcion,
-        foto,
-        activo: true, // activa por defecto
+        foto: rutaFoto,
+        activo: true,
       },
     });
 
@@ -66,6 +73,7 @@ export const createNoticia = async (req: Request, res: Response) => {
       descripcion: nuevaNoticia.texto,
     });
   } catch (error) {
+    console.error(error);
     res.status(500).json({ error: 'Error al crear la noticia' });
   }
 };
@@ -73,15 +81,30 @@ export const createNoticia = async (req: Request, res: Response) => {
 // Actualizar una noticia por ID
 export const updateNoticia = async (req: Request, res: Response) => {
   const { id } = req.params;
-  const { nombre, descripcion, foto } = req.body;
+  const { nombre, descripcion } = req.body;
+  const file = req.file;
 
   try {
+    // Obtener la noticia actual
+    const noticiaActual = await prisma.noticia.findUnique({
+      where: { id: Number(id) },
+    });
+
+    if (!noticiaActual) {
+      return res.status(404).json({ error: 'Noticia no encontrada' });
+    }
+
+    // Determinar si se subió una nueva foto
+    const nuevaRutaFoto = file
+      ? `/imagenes/noticia/${file.filename}`
+      : noticiaActual.foto;
+
     const noticiaActualizada = await prisma.noticia.update({
       where: { id: Number(id) },
       data: {
         titulo: nombre,
         texto: descripcion,
-        foto,
+        foto: nuevaRutaFoto,
       },
     });
 
@@ -92,6 +115,7 @@ export const updateNoticia = async (req: Request, res: Response) => {
       descripcion: noticiaActualizada.texto,
     });
   } catch (error) {
+    console.error("Error en updateNoticia:", error);
     res.status(500).json({ error: 'Error al actualizar la noticia' });
   }
 };
@@ -116,7 +140,7 @@ export const deleteNoticia = async (req: Request, res: Response) => {
 export const getGanancias = async (_req: Request, res: Response) => {
   try {
     // Fecha inicial: hace 12 meses desde hoy
-    const fechaInicio = subMonths(new Date(), 11); // Incluye el mes actual
+    const fechaInicio = subMonths(new Date(), 11);
     const ventas = await prisma.venta.findMany({
       where: {
         fecha: {

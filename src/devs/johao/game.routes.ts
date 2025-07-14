@@ -8,6 +8,7 @@ import {
   deleteNoticia,
   getGanancias,
 } from './game.controller';
+import { upload } from '../../middlewares/upload';
 
 const router = Router();
 
@@ -17,8 +18,8 @@ router.get('/usuarios/count', countUsuarios);
 
 // Rutas de noticias
 router.get('/noticias', getAllNoticias);
-router.post('/noticias', createNoticia);
-router.put('/noticias/:id', updateNoticia);
+router.post('/noticias', upload.single('foto'), createNoticia);
+router.put('/noticias/:id', upload.single('foto'), updateNoticia);
 router.delete('/noticias/:id', deleteNoticia);
 
 // Rutas de ventas
