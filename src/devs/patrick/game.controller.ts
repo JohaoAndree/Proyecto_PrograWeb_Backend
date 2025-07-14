@@ -1,5 +1,12 @@
-import { Request, Response } from 'express';
+export const recuperar = async (req: Request, res: Response) => {
+  const { correo } = req.body;
 
-export const getAllGames = (_req: Request, res: Response) => {
-  res.json({ mensaje: 'Listado de juegos desde la ruta de [NOMBRE]' });
+  if (!correo) {
+    return res.status(400).json({ mensaje: 'Correo es requerido.' });
+  }
+
+  // Simulación de envío — aquí va tu lógica con Nodemailer y token (si quieres agregar)
+  console.log(`📨 Enviando enlace de recuperación a: ${correo}`);
+
+  return res.status(200).json({ mensaje: 'Se envió un enlace para restablecer la contraseña.' });
 };
