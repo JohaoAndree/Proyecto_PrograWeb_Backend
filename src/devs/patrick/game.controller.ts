@@ -1,12 +1,12 @@
 import { Request, Response } from 'express';
-import { PrismaClient } from '../../generated/prisma';
-import crypto from 'crypto';
-import nodemailer from 'nodemailer';
+import { PrismaClient } from '../../generated/prisma';//npm install prisma @prisma/client
+import crypto from 'crypto';//npm install bcrypt
+import nodemailer from 'nodemailer';//npm install nodemailer
 import bcrypt from 'bcrypt'; // npm install --save-dev @types/bcrypt
 
 const prisma = new PrismaClient();
 
-// 👉 Recuperar contraseña - genera token y lo manda por correo
+// Recuperar contraseña - genera token y lo manda por correo
 const recuperar = async (req: Request, res: Response) => {
   const { correo } = req.body;
 
@@ -37,13 +37,13 @@ const recuperar = async (req: Request, res: Response) => {
     data: { token },
   });
 
-  const link = `http://localhost:5173/reset-password/${token}`;
+  const link = `http://localhost:5174/reset-password/${token}`;//cambiar con el localhost del momento
 
   const transporter = nodemailer.createTransport({
     service: 'gmail',
     auth: {
       user: 'patrick.ch1429@gmail.com',
-      pass: 'ndkf saom dsfu nfdw', // ⚠️ Usa un app password real en producción
+      pass: 'ndkf saom dsfu nfdw', //  Usa un app password real en producción
     },
   });
 
@@ -62,7 +62,7 @@ const recuperar = async (req: Request, res: Response) => {
   return res.status(200).json({ mensaje: 'Se envió un enlace para restablecer la contraseña.' });
 };
 
-// 👉 Cambiar contraseña - usa el token para validar y actualizar la clave
+// Cambiar contraseña - usa el token para validar y actualizar la clave
 const nuevaClave = async (req: Request, res: Response) => {
   const { token, nuevaClave } = req.body;
 
@@ -106,5 +106,5 @@ const nuevaClave = async (req: Request, res: Response) => {
 };
 
 
-// ✅ Exportación explícita al final
+// Exportación explícita al final
 export { recuperar, nuevaClave };
