@@ -1,7 +1,6 @@
 import { Request, Response } from 'express';
-import { PrismaClient } from '@prisma/client';
+import { PrismaClient, Noticia} from '../../generated/prisma';
 import { subMonths, startOfMonth, format, isAfter } from 'date-fns';
-import { Noticia } from '../../generated/prisma';
 
 const prisma = new PrismaClient();
 
@@ -11,6 +10,7 @@ export const getAllUsuarios = async (_req: Request, res: Response) => {
     const usuarios = await prisma.usuario.findMany();
     res.json(usuarios);
   } catch (error) {
+    console.error(error);
     res.status(500).json({ error: 'Error al obtener usuarios' });
   }
 };
