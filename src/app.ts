@@ -1,14 +1,21 @@
-import express, { Request, Response } from 'express';
 import cors from 'cors';
+import express, { Request, Response } from 'express';
 import morgan from 'morgan';
 import path from 'path';
 
 // Importaciones de rutas de cada dev
 import diegoRoutes from './devs/diego/game.routes';
 import fabianaRoutes from './devs/fabiana/game.routes';
+import fabianaUserRoutes from './devs/fabiana/user.routes';
+
+
+
 import gersonRoutes from './devs/gerson/game.routes';
 import johaoRoutes from './devs/johao/game.routes';
 import patrickRoutes from './devs/patrick/game.routes';
+
+
+
 
 const app = express();
 
@@ -49,5 +56,10 @@ app.use('/api/fabiana/games', fabianaRoutes);
 app.use('/api/gerson/games', gersonRoutes);
 app.use('/api', johaoRoutes);
 app.use('/api/patrick/games', patrickRoutes);
+app.use('/api/fabiana/users', fabianaUserRoutes);
+app.use('/api', fabianaUserRoutes);
+
+
+
 
 export default app;

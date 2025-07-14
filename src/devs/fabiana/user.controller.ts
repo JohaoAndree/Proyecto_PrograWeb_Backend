@@ -1,0 +1,66 @@
+import { Request, Response } from 'express';
+import { PrismaClient } from '../../generated/prisma';
+
+const prisma = new PrismaClient();
+
+export const registrarUsuario = async (req: Request, res: Response) => {
+  try {
+    const { correo, password, nombre, foto } = req.body;
+    const nuevoUsuario = await prisma.usuario.create({
+      data: { correo, password, nombre, foto }
+    });
+    res.status(201).json(nuevoUsuario);
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ mensaje: 'Error al registrar usuario' });
+  }
+};
+
+export const loginUsuario = async (req: Request, res: Response) => {
+  try {
+    const { correo, password } = req.body;
+    const usuario = await prisma.usuario.findUnique({ where: { correo } });
+
+    if (!usuario || usuario.password !== password) {
+      return res.status(401).json({ mensaje: 'Credenciales inválidas' });
+    }
+
+    res.status(200).json({ mensaje: 'Login exitoso', usuario });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ mensaje: 'Error en el login' });
+  }
+};
+
+export const obtenerPerfil = async (req: Request, res: Response) => {
+  try {
+    const { id } = req.params;
+    const usuario = await prisma.usuario.findUnique({ where: { id: Number(id) } });
+
+    if (!usuario) {
+      return res.status(404).json({ mensaje: 'Usuario no encontrado' });
+    }
+
+    res.status(200).json(usuario);
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ mensaje: 'Error al obtener perfil' });
+  }
+};
+
+export const actualizarPerfil = async (req: Request, res: Response) => {
+  try {
+    const { id } = req.params;
+    const data = req.body;
+
+    const usuario = await prisma.usuario.update({
+      where: { id: Number(id) },
+      data
+    });
+
+    res.status(200).json(usuario);
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ mensaje: 'Error al actualizar perfil' });
+  }
+};
