@@ -24,6 +24,7 @@ model Usuario {
   estado         Boolean        @default(true)
   ventas         Venta[]
   calificaciones Calificacion[]
+  carrito        Carrito[]
 }
 
 model Noticia {
@@ -46,16 +47,22 @@ model Venta {
 }
 
 model Juego {
-  id             Int              @id @default(autoincrement())
-  nombre         String
-  precio         Float
-  estaOferta     Boolean          @default(false)
-  estado         Boolean          @default(true)
-  categoria      Categoria        @relation(fields: [categoriaId], references: [id])
-  categoriaId    Int
-  ventas         Venta[]
-  calificaciones Calificacion[]
-  plataformas    JuegoPlataforma[]
+  id          Int       @id @default(autoincrement())
+  nombre      String
+  descripcion String
+  precio      Float
+  descuento   String? // <-- Asegúrate que sea opcional si no siempre lo usas
+  foto        String?
+  estaOferta  Boolean   @default(false)
+  estado      Boolean   @default(true)
+  categoriaId Int
+  categoria   Categoria @relation(fields: [categoriaId], references: [id])
+
+  // Relaciones inversas 👇
+  ventas         Venta[] // <- relación inversa con Venta
+  calificaciones Calificacion[] // <- relación inversa con Calificacion
+  plataformas    JuegoPlataforma[] // <- relación inversa con JuegoPlataforma
+  carrito        Carrito[]
 }
 
 model Calificacion {
@@ -69,7 +76,7 @@ model Calificacion {
 }
 
 model Plataforma {
-  id     Int              @id @default(autoincrement())
+  id     Int               @id @default(autoincrement())
   nombre String
   juegos JuegoPlataforma[]
 }
@@ -88,4 +95,14 @@ model Categoria {
   id     Int     @id @default(autoincrement())
   nombre String
   juegos Juego[]
+}
+
+model Carrito {
+  id        Int     @id @default(autoincrement())
+  usuario   Usuario @relation(fields: [usuarioId], references: [id])
+  usuarioId Int
+  juego     Juego   @relation(fields: [juegoId], references: [id])
+  juegoId   Int
+
+  @@unique([usuarioId, juegoId])
 }

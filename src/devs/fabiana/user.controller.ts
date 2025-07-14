@@ -58,9 +58,32 @@ export const actualizarPerfil = async (req: Request, res: Response) => {
       data
     });
 
-    res.status(200).json(usuario);
+    res.status(200).json({
+      mensaje: 'Perfil actualizado correctamente',
+      nombre: usuario.nombre,
+      correo: usuario.correo
+    });
   } catch (error) {
     console.error(error);
     res.status(500).json({ mensaje: 'Error al actualizar perfil' });
+  }
+
+
+ 
+
+};
+
+export const eliminarDelCarrito = async (req: Request, res: Response) => {
+  try {
+    const { id } = req.params;
+
+    const carritoEliminado = await prisma.carrito.delete({
+      where: { id: Number(id) }
+    });
+
+    res.status(200).json({ mensaje: 'Juego eliminado del carrito', carritoEliminado });
+  } catch (error) {
+    console.error('Error al eliminar del carrito:', error);
+    res.status(500).json({ mensaje: 'Error al eliminar del carrito' });
   }
 };
