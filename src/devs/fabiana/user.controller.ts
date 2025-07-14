@@ -7,7 +7,7 @@ export const registrarUsuario = async (req: Request, res: Response) => {
   try {
     const { correo, password, nombre, foto } = req.body;
     const nuevoUsuario = await prisma.usuario.create({
-      data: { correo, password, nombre, foto }
+      data: { correo: correo.trim().toLowerCase(), password, nombre, foto }
     });
     res.status(201).json(nuevoUsuario);
   } catch (error) {
@@ -19,18 +19,36 @@ export const registrarUsuario = async (req: Request, res: Response) => {
 export const loginUsuario = async (req: Request, res: Response) => {
   try {
     const { correo, password } = req.body;
-    const usuario = await prisma.usuario.findUnique({ where: { correo } });
 
-    if (!usuario || usuario.password !== password) {
+    console.log('📩 Correo recibido:', correo);
+    console.log('🔑 Contraseña recibida:', password);
+
+    const usuario = await prisma.usuario.findUnique({
+      where: { correo }
+    });
+
+    if (!usuario) {
+      console.log('❌ Usuario no encontrado');
       return res.status(401).json({ mensaje: 'Credenciales inválidas' });
     }
 
+    console.log('✅ Usuario encontrado:', usuario.correo);
+    console.log('🆚 Comparando:', usuario.password, 'vs', password);
+
+    if (usuario.password !== password) {
+      console.log('❌ Contraseña incorrecta');
+      return res.status(401).json({ mensaje: 'Credenciales inválidas' });
+    }
+
+    console.log('✅ Login exitoso');
     res.status(200).json({ mensaje: 'Login exitoso', usuario });
+
   } catch (error) {
-    console.error(error);
+    console.error('❗ Error en el login:', error);
     res.status(500).json({ mensaje: 'Error en el login' });
   }
 };
+
 
 export const obtenerPerfil = async (req: Request, res: Response) => {
   try {
@@ -67,10 +85,6 @@ export const actualizarPerfil = async (req: Request, res: Response) => {
     console.error(error);
     res.status(500).json({ mensaje: 'Error al actualizar perfil' });
   }
-
-
- 
-
 };
 
 export const eliminarDelCarrito = async (req: Request, res: Response) => {
