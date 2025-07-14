@@ -1,20 +1,81 @@
 import { Request, Response } from 'express';
+import { PrismaClient } from '@prisma/client';
+import nodemailer from 'nodemailer';
+const prisma = new PrismaClient();
+const transporter = nodemailer.createTransport({
+  service: 'gmail',
+  auth: {
+    user: 'gerandreleon@gmail.com', // <-- cambia esto por tu correo real
+    pass: 'rura bczp ojzn uqvh', // <-- NO es tu clave normal, es la de aplicación
+  },
+});
 
 // === REQ3 ===
-export const registrarUsuario = (req: Request, res: Response) => {
-    const { nombre, correo, pais, contra } = req.body;
+export const registrarUsuario = async (req: Request, res: Response) => {
+  console.log("🎯 Entró al endpoint /registro");
+  console.log("BODY RECIBIDO EN BACKEND:", req.body);
 
-    if (!nombre || !correo || !pais || !contra) {
-        return res.status(400).json({ mensaje: "Datos incompletos" });
+  const { nombre, correo, pais, password } = req.body;
+
+  if (!nombre || !correo || !pais || !password) {
+    return res.status(400).json({ mensaje: "Datos incompletos" });
+  }
+
+  try {
+    // 🔎 Verificar si ya existe un usuario con el mismo correo
+    const existente = await prisma.usuario.findUnique({
+      where: { correo },
+    });
+
+    if (existente) {
+      return res.status(409).json({ mensaje: "El correo ya está registrado" });
     }
 
-    console.log("Usuario registrado:", { nombre, correo, pais });
-    return res.status(200).json({ mensaje: "Usuario registrado correctamente" });
+    // ✅ Crear nuevo usuario
+    const nuevoUsuario = await prisma.usuario.create({
+      data: {
+        nombre,
+        correo,
+        pais,
+        password,
+      },
+    });
+
+    // ✅ Enviar correo
+    const mailOptions = {
+      from: 'GameStore <gerandreleon@gmail.com>',
+      to: correo,
+      subject: `Hola ${nombre}`,
+      html: `
+        <p>Hola ${nombre},</p>
+        <p>Gracias por registrarte en <strong>GameStore</strong>.</p>
+        <p>Tu registro fue exitoso.</p>
+        <p>Si no fuiste tú, ignora este mensaje.</p>
+      `,
+    };
+
+    await transporter.sendMail(mailOptions);
+    console.log("📧 Correo enviado a:", correo);
+
+    return res.status(201).json({
+      mensaje: "Usuario registrado correctamente",
+      usuario: nuevoUsuario,
+    });
+
+  } catch (error) {
+    console.error("Error al registrar usuario:", error);
+    return res.status(500).json({
+      mensaje: "Error al registrar usuario",
+    });
+  }
 };
+
+
+
 
 // === REQ7 ===
 
-export const obtenerJuegosMasVendidos = (_req: Request, res: Response) => {
+export const obtenerJuegosMasVendidos = (req: Request, res: Response) => {
   const juegos = [
     {
       titulo: "Resident Evil Village",
@@ -68,7 +129,8 @@ export const obtenerJuegosMasVendidos = (_req: Request, res: Response) => {
 
 // === REQ8 ===
 
-export const obtenerJuegosPopulares = (_req: Request, res: Response) => {
+
+export const obtenerJuegosPopulares = (req: Request, res: Response) => {
   const juegos = [
     {
       titulo: "Red Dead Redemption 2",
