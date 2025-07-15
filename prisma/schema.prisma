@@ -18,16 +18,13 @@ model Usuario {
   correo         String         @unique
   password       String
   nombre         String
-  pais           String         // ✅ ESTE CAMPO DEBE ESTAR AQUÍ
+  pais           String
   foto           String?
   token          String?
   estado         Boolean        @default(true)
   ventas         Venta[]
   calificaciones Calificacion[]
 }
-
-
-
 
 model Noticia {
   id     Int     @id @default(autoincrement())
@@ -52,19 +49,19 @@ model Juego {
   id             Int              @id @default(autoincrement())
   nombre         String
   precio         Float
-  estaOferta     Boolean          @default(false) // ✅ NUEVO
-  estado         Boolean          @default(true)  // ✅ NUEVO
-  imagen         String           // ✅ NUEVO
-  descripcion    String           // ✅ NUEVO
-  masVendido     Boolean          @default(false) // ✅ NUEVO
+  descuento      String?
+  foto           String?
+  estaOferta     Boolean          @default(false)
+  estado         Boolean          @default(true)
+  imagen         String
+  descripcion    String?
+  masVendido     Boolean          @default(false)
   categoria      Categoria        @relation(fields: [categoriaId], references: [id])
   categoriaId    Int
   ventas         Venta[]
   calificaciones Calificacion[]
   plataformas    JuegoPlataforma[]
 }
-
-
 
 model Calificacion {
   id         Int     @id @default(autoincrement())

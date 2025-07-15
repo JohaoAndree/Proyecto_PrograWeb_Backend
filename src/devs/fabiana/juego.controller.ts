@@ -1,6 +1,5 @@
-// src/devs/fabiana/juego.controller.ts
 import { Request, Response } from 'express';
-import { PrismaClient } from '../../generated/prisma';
+import { PrismaClient } from '@prisma/client';
 const prisma = new PrismaClient();
 
 
@@ -14,7 +13,7 @@ export const obtenerJuegos = async (_req: Request, res: Response) => {
 };
 
 export const agregarJuego = async (req: Request, res: Response) => {
-  const { nombre, precio, descripcion, categoriaId, descuento, foto } = req.body;
+  const { nombre, precio, descripcion, categoriaId, descuento, foto, imagen } = req.body;
 
   // Asegúrate de convertir categoriaId a número
   const categoriaIdNumber = Number(categoriaId); // Definir correctamente
@@ -36,9 +35,12 @@ export const agregarJuego = async (req: Request, res: Response) => {
         descripcion,
         descuento,
         foto,
+        imagen,
         estaOferta: false,
         estado: true,
-        categoria: { connect: { id: categoriaIdNumber } }, // Usa categoriaIdNumber aquí
+        categoria: {
+          connect: { id: categoriaIdNumber },
+        },
       },
     });
 
@@ -48,11 +50,6 @@ export const agregarJuego = async (req: Request, res: Response) => {
     res.status(500).json({ mensaje: 'Error al agregar juego' });
   }
 };
-
-
-
-
-
 
 export const editarJuego = async (req: Request, res: Response) => {
   const id = Number(req.params.id);
@@ -92,8 +89,6 @@ export const editarJuego = async (req: Request, res: Response) => {
     res.status(500).json({ mensaje: 'Error al editar juego' });
   }
 };
-
-
 
 export const eliminarJuego = async (req: Request, res: Response) => {
   const id = Number(req.params.id);

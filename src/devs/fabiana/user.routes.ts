@@ -1,7 +1,6 @@
 import { Router } from 'express';
 import {
     actualizarPerfil,
-    eliminarDelCarrito,
     loginUsuario,
     obtenerPerfil,
     registrarUsuario
@@ -13,6 +12,5 @@ router.post('/users/register', registrarUsuario);
 router.post('/users/login', loginUsuario);
 router.get('/users/:id', obtenerPerfil);
 router.put('/users/:id', actualizarPerfil);
-router.delete('/carrito/:id', eliminarDelCarrito);
 
 export default router;

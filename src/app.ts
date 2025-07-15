@@ -5,17 +5,12 @@ import path from 'path';
 
 // Importaciones de rutas de cada dev
 import diegoRoutes from './devs/diego/game.routes';
-import carritoRoutes from './devs/fabiana/carrito.router';
 import fabianaRoutes from './devs/fabiana/game.routes';
 import fabianaUserRoutes from './devs/fabiana/user.routes';
-
-
 import juegoRoutes from './devs/fabiana/juego.router';
 import gersonRoutes from './devs/gerson/game.routes';
 import johaoRoutes from './devs/johao/game.routes';
 import patrickRoutes from './devs/patrick/game.routes';
-
-
 
 const app = express();
 
@@ -34,13 +29,6 @@ app.use('/api/johao', johaoRoutes);
 app.use('/api/patrick/games', patrickRoutes);
 app.use('/api/fabiana/users', fabianaUserRoutes);
 app.use('/api', fabianaUserRoutes);
-app.use('/api/carrito', carritoRoutes);
 app.use("/api/juegos", juegoRoutes);
-
-
-// Inicia el servidor
-app.listen(5020, () => {
-  console.log('Servidor corriendo en http://localhost:5020');
-});
 
 export default app;

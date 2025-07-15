@@ -1,20 +1,29 @@
 import { Request, Response } from 'express';
-import { PrismaClient } from '../../generated/prisma';
+import { PrismaClient } from '@prisma/client';
 
 const prisma = new PrismaClient();
 
 export const registrarUsuario = async (req: Request, res: Response) => {
   try {
-    const { correo, password, nombre, foto } = req.body;
+    const { correo, password, nombre, foto, pais } = req.body;
+
     const nuevoUsuario = await prisma.usuario.create({
-      data: { correo: correo.trim().toLowerCase(), password, nombre, foto }
+      data: {
+        correo: correo.trim().toLowerCase(),
+        password,
+        nombre,
+        foto,
+        pais,
+      },
     });
+
     res.status(201).json(nuevoUsuario);
   } catch (error) {
     console.error(error);
     res.status(500).json({ mensaje: 'Error al registrar usuario' });
   }
 };
+
 
 export const loginUsuario = async (req: Request, res: Response) => {
   try {
@@ -84,20 +93,5 @@ export const actualizarPerfil = async (req: Request, res: Response) => {
   } catch (error) {
     console.error(error);
     res.status(500).json({ mensaje: 'Error al actualizar perfil' });
-  }
-};
-
-export const eliminarDelCarrito = async (req: Request, res: Response) => {
-  try {
-    const { id } = req.params;
-
-    const carritoEliminado = await prisma.carrito.delete({
-      where: { id: Number(id) }
-    });
-
-    res.status(200).json({ mensaje: 'Juego eliminado del carrito', carritoEliminado });
-  } catch (error) {
-    console.error('Error al eliminar del carrito:', error);
-    res.status(500).json({ mensaje: 'Error al eliminar del carrito' });
   }
 };

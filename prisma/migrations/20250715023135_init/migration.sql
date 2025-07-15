@@ -4,6 +4,7 @@ CREATE TABLE "Usuario" (
     "correo" TEXT NOT NULL,
     "password" TEXT NOT NULL,
     "nombre" TEXT NOT NULL,
+    "pais" TEXT NOT NULL,
     "foto" TEXT,
     "token" TEXT,
     "estado" BOOLEAN NOT NULL DEFAULT true,
@@ -41,6 +42,9 @@ CREATE TABLE "Juego" (
     "precio" DOUBLE PRECISION NOT NULL,
     "estaOferta" BOOLEAN NOT NULL DEFAULT false,
     "estado" BOOLEAN NOT NULL DEFAULT true,
+    "imagen" TEXT NOT NULL,
+    "descripcion" TEXT,
+    "masVendido" BOOLEAN NOT NULL DEFAULT false,
     "categoriaId" INTEGER NOT NULL,
 
     CONSTRAINT "Juego_pkey" PRIMARY KEY ("id")
