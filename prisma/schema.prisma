@@ -53,7 +53,7 @@ model Juego {
   foto           String?
   estaOferta     Boolean          @default(false)
   estado         Boolean          @default(true)
-  imagen         String
+  imagen         String?
   descripcion    String?
   masVendido     Boolean          @default(false)
   categoria      Categoria        @relation(fields: [categoriaId], references: [id])
