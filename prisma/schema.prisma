@@ -6,7 +6,6 @@
 
 generator client {
   provider = "prisma-client-js"
-  output   = "../src/generated/prisma"
 }
 
 datasource db {
@@ -19,13 +18,16 @@ model Usuario {
   correo         String         @unique
   password       String
   nombre         String
+  pais           String         // ✅ ESTE CAMPO DEBE ESTAR AQUÍ
   foto           String?
   token          String?
   estado         Boolean        @default(true)
   ventas         Venta[]
   calificaciones Calificacion[]
-  carrito        Carrito[]
 }
+
+
+
 
 model Noticia {
   id     Int     @id @default(autoincrement())
@@ -47,23 +49,22 @@ model Venta {
 }
 
 model Juego {
-  id          Int       @id @default(autoincrement())
-  nombre      String
-  descripcion String
-  precio      Float
-  descuento   String? // <-- Asegúrate que sea opcional si no siempre lo usas
-  foto        String?
-  estaOferta  Boolean   @default(false)
-  estado      Boolean   @default(true)
-  categoriaId Int
-  categoria   Categoria @relation(fields: [categoriaId], references: [id])
-
-  // Relaciones inversas 👇
-  ventas         Venta[] // <- relación inversa con Venta
-  calificaciones Calificacion[] // <- relación inversa con Calificacion
-  plataformas    JuegoPlataforma[] // <- relación inversa con JuegoPlataforma
-  carrito        Carrito[]
+  id             Int              @id @default(autoincrement())
+  nombre         String
+  precio         Float
+  estaOferta     Boolean          @default(false) // ✅ NUEVO
+  estado         Boolean          @default(true)  // ✅ NUEVO
+  imagen         String           // ✅ NUEVO
+  descripcion    String           // ✅ NUEVO
+  masVendido     Boolean          @default(false) // ✅ NUEVO
+  categoria      Categoria        @relation(fields: [categoriaId], references: [id])
+  categoriaId    Int
+  ventas         Venta[]
+  calificaciones Calificacion[]
+  plataformas    JuegoPlataforma[]
 }
+
+
 
 model Calificacion {
   id         Int     @id @default(autoincrement())
@@ -76,7 +77,7 @@ model Calificacion {
 }
 
 model Plataforma {
-  id     Int               @id @default(autoincrement())
+  id     Int              @id @default(autoincrement())
   nombre String
   juegos JuegoPlataforma[]
 }
@@ -95,14 +96,4 @@ model Categoria {
   id     Int     @id @default(autoincrement())
   nombre String
   juegos Juego[]
-}
-
-model Carrito {
-  id        Int     @id @default(autoincrement())
-  usuario   Usuario @relation(fields: [usuarioId], references: [id])
-  usuarioId Int
-  juego     Juego   @relation(fields: [juegoId], references: [id])
-  juegoId   Int
-
-  @@unique([usuarioId, juegoId])
 }
