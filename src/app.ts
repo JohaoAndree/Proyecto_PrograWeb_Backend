@@ -1,13 +1,13 @@
 import cors from 'cors';
-import express, { Request, Response } from 'express';
+import express from 'express';
 import morgan from 'morgan';
 import path from 'path';
 
 // Importaciones de rutas de cada dev
 import diegoRoutes from './devs/diego/game.routes';
 import fabianaRoutes from './devs/fabiana/game.routes';
-import fabianaUserRoutes from './devs/fabiana/user.routes';
 import juegoRoutes from './devs/fabiana/juego.router';
+import fabianaUserRoutes from './devs/fabiana/user.routes';
 import gersonRoutes from './devs/gerson/game.routes';
 import johaoRoutes from './devs/johao/game.routes';
 import patrickRoutes from './devs/patrick/game.routes';
@@ -16,7 +16,9 @@ const app = express();
 
 app.use(cors());
 app.use(morgan('dev'));
-app.use(express.json());
+app.use(express.json({ limit: '10mb' }));
+app.use(express.urlencoded({ limit: '10mb', extended: true }));
+
 
 // Rutas públicas para imágenes
 app.use('/imagenes', express.static(path.join(__dirname, '../public/imagenes')));

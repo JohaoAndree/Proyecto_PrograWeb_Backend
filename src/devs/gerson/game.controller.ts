@@ -1,5 +1,6 @@
+import { PrismaClient } from '@prisma/client'; // ✅ correcta
 import { Request, Response } from 'express';
-import { PrismaClient } from '@prisma/client';
+
 import nodemailer from 'nodemailer';
 const prisma = new PrismaClient();
 const transporter = nodemailer.createTransport({
