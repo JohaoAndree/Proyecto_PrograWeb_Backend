@@ -4,7 +4,7 @@
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "build": "npm run generate && npx tsc && cp -r src/generated dist/",
+    "build": "npm install && npx prisma generate && npx tsc",
     "start": "npx prisma migrate deploy && node ./dist/index.js",
     "dev": "npx nodemon ./src/index.ts"
   },
