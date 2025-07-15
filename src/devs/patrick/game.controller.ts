@@ -1,5 +1,5 @@
 import { Request, Response } from 'express';
-import { PrismaClient } from '../../generated/prisma';//npm install prisma @prisma/client
+import { PrismaClient } from '@prisma/client';//npm install prisma @prisma/client
 import crypto from 'crypto';//npm install bcrypt
 import nodemailer from 'nodemailer';//npm install nodemailer
 import bcrypt from 'bcrypt'; // npm install --save-dev @types/bcrypt

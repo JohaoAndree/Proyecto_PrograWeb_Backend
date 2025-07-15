@@ -1,5 +1,5 @@
 import { Request, Response } from 'express';
-import { PrismaClient, Noticia} from '../../generated/prisma';
+import { PrismaClient, Noticia} from '@prisma/client';
 import { subMonths, startOfMonth, format, isAfter } from 'date-fns';
 
 const prisma = new PrismaClient();
