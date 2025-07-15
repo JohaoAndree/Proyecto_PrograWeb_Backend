@@ -1,6 +1,6 @@
 import { PrismaClient } from '@prisma/client'; // ✅ correcta
 import { Request, Response } from 'express';
-
+import bcrypt from 'bcrypt';
 
 const prisma = new PrismaClient();
 
@@ -25,32 +25,35 @@ export const registrarUsuario = async (req: Request, res: Response) => {
   }
 };
 
-
 export const loginUsuario = async (req: Request, res: Response) => {
   try {
     const { correo, password } = req.body;
 
-    console.log('📩 Correo recibido:', correo);
-    console.log('🔑 Contraseña recibida:', password);
-
-    const usuario = await prisma.usuario.findUnique({
-      where: { correo }
-    });
+    const usuario = await prisma.usuario.findUnique({ where: { correo } });
 
     if (!usuario) {
-      console.log('❌ Usuario no encontrado');
       return res.status(401).json({ mensaje: 'Credenciales inválidas' });
     }
 
-    console.log('✅ Usuario encontrado:', usuario.correo);
-    console.log('🆚 Comparando:', usuario.password, 'vs', password);
+    const storedPassword = usuario.password;
 
-    if (usuario.password !== password) {
-      console.log('❌ Contraseña incorrecta');
+    // Detectar si la contraseña guardada es hash de bcrypt
+    const esHash = storedPassword.startsWith('$2b$') || storedPassword.startsWith('$2a$');
+
+    let esCorrecta = false;
+
+    if (esHash) {
+      // Comparar con bcrypt
+      esCorrecta = await bcrypt.compare(password, storedPassword);
+    } else {
+      // Comparar texto plano (usuarios antiguos)
+      esCorrecta = password === storedPassword;
+    }
+
+    if (!esCorrecta) {
       return res.status(401).json({ mensaje: 'Credenciales inválidas' });
     }
 
-    console.log('✅ Login exitoso');
     res.status(200).json({ mensaje: 'Login exitoso', usuario });
 
   } catch (error) {
@@ -58,7 +61,6 @@ export const loginUsuario = async (req: Request, res: Response) => {
     res.status(500).json({ mensaje: 'Error en el login' });
   }
 };
-
 
 export const obtenerPerfil = async (req: Request, res: Response) => {
   try {
@@ -96,3 +98,29 @@ export const actualizarPerfil = async (req: Request, res: Response) => {
     res.status(500).json({ mensaje: 'Error al actualizar perfil' });
   }
 };
+
+/* export const loginUsuario = async (req: Request, res: Response) => {
+  try {
+    const { correo, password } = req.body;
+
+    const usuario = await prisma.usuario.findUnique({
+      where: { correo }
+    });
+
+    if (!usuario) {
+      return res.status(401).json({ mensaje: 'Credenciales inválidas' });
+    }
+
+    // Comparar contraseña ingresada con la contraseña hasheada en BD
+    const esCorrecta = await bcrypt.compare(password, usuario.password);
+    if (!esCorrecta) {
+      return res.status(401).json({ mensaje: 'Credenciales inválidas' });
+    }
+
+    res.status(200).json({ mensaje: 'Login exitoso', usuario });
+
+  } catch (error) {
+    console.error('❗ Error en el login:', error);
+    res.status(500).json({ mensaje: 'Error en el login' });
+  }
+}; */

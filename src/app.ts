@@ -19,7 +19,6 @@ app.use(morgan('dev'));
 app.use(express.json({ limit: '10mb' }));
 app.use(express.urlencoded({ limit: '10mb', extended: true }));
 
-
 // Rutas públicas para imágenes
 app.use('/imagenes', express.static(path.join(__dirname, '../public/imagenes')));
 

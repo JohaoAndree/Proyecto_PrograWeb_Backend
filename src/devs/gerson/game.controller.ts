@@ -1,7 +1,7 @@
-import { PrismaClient } from '@prisma/client'; // ✅ correcta
+import { PrismaClient } from '@prisma/client';
 import { Request, Response } from 'express';
-
 import nodemailer from 'nodemailer';
+
 const prisma = new PrismaClient();
 const transporter = nodemailer.createTransport({
   service: 'gmail',
@@ -13,6 +13,9 @@ const transporter = nodemailer.createTransport({
 
 // === REQ3 ===
 export const registrarUsuario = async (req: Request, res: Response) => {
+  console.log("🔵 LLEGÓ A registrarUsuario");
+
+
   console.log("🎯 Entró al endpoint /registro");
   console.log("BODY RECIBIDO EN BACKEND:", req.body);
 
@@ -29,7 +32,8 @@ export const registrarUsuario = async (req: Request, res: Response) => {
     });
 
     if (existente) {
-      return res.status(409).json({ mensaje: "El correo ya está registrado" });
+      return res.status(409).json({ mensaje: "El correo ya está registrado", msg: "El correo ya está registrado" });
+
     }
 
     // ✅ Crear nuevo usuario
@@ -44,24 +48,26 @@ export const registrarUsuario = async (req: Request, res: Response) => {
 
     // ✅ Enviar correo
     const mailOptions = {
-      from: 'GameStore <gerandreleon@gmail.com>',
-      to: correo,
-      subject: `Hola ${nombre}`,
-      html: `
-        <p>Hola ${nombre},</p>
-        <p>Gracias por registrarte en <strong>GameStore</strong>.</p>
-        <p>Tu registro fue exitoso.</p>
-        <p>Si no fuiste tú, ignora este mensaje.</p>
-      `,
-    };
+  from: 'GameStore <gerandreleon@gmail.com>',
+  to: correo,
+  subject: `Hola ${nombre}`, // ✅ backticks
+  html: `
+    <p>Hola ${nombre},</p>
+    <p>Gracias por registrarte en <strong>DieguitoStore</strong>.</p>
+    <p>Tu registro fue exitoso.</p>
+    <p>Si no fuiste tú, ignora este mensaje.</p>
+  `, // ✅ toda la plantilla HTML entre backticks
+};
+
 
     await transporter.sendMail(mailOptions);
     console.log("📧 Correo enviado a:", correo);
 
-    return res.status(201).json({
-      mensaje: "Usuario registrado correctamente",
-      usuario: nuevoUsuario,
-    });
+    return res.status(200).json({
+  mensaje: "Usuario registrado correctamente",
+  usuario: nuevoUsuario,
+});
+
 
   } catch (error) {
     console.error("Error al registrar usuario:", error);
@@ -76,51 +82,61 @@ export const registrarUsuario = async (req: Request, res: Response) => {
 
 // === REQ7 ===
 
-export const obtenerJuegosMasVendidos = (req: Request, res: Response) => {
+export const obtenerJuegosMasVendidos = (_req: Request, res: Response) => {
   const juegos = [
     {
+      id: 1,
       titulo: "Resident Evil Village",
-      imagen: "/imagenes/v.jpg",
+      imagen: "/imagenes/juegos/v.jpg",
       descripcion: "Lanzado en 2021, Resident Evil Village es la octava entrega principal de la serie Resident Evil, desarrollada y publicada por Capcom. Es la secuela de Resident Evil 7: Biohazard (2017) y continúa la historia de Ethan Winters, quien busca a su hija secuestrada en un misterioso pueblo europeo. El juego combina elementos de terror y acción en primera persona, presentando enemigos como hombres lobo y vampiros, y ha sido elogiado por su atmósfera envolvente y gráficos impresionantes ."
     },
+
     {
+      id: 2,
       titulo: "Resident Evil 4",
-      imagen: "/imagenes/resident.jpg",
+      imagen: "/imagenes/juegos/resident.jpg",
       descripcion: "Resident Evil 4, originalmente lanzado en 2005 y rehecho en 2023 por Capcom, sigue al agente Leon S. Kennedy en su misión de rescatar a la hija del presidente de EE. UU. en una aldea española infestada por una secta. Este remake moderniza la jugabilidad con gráficos actualizados y controles mejorados, manteniendo la tensión y el ritmo del original. Es considerado un hito en los juegos de acción y terror ."
     },
     {
+      id: 3,
       titulo: "Call Of Duty: Modern Warfare 3",
-      imagen: "/imagenes/cod.jpg",
+      imagen: "/imagenes/juegos/cod.jpg",
       descripcion: "Call of Duty: Modern Warfare 3, desarrollado por Infinity Ward y Sledgehammer Games, fue lanzado en 2011 como la conclusión de la trilogía Modern Warfare. El juego ofrece una campaña intensa que sigue la lucha contra la organización terrorista ultranacionalista rusa. Con un multijugador robusto y modos cooperativos, MW3 es conocido por su acción rápida y mapas bien diseñados."
     },
     {
+      id: 4,
       titulo: "Final Fantasy XVI",
-      imagen: "/imagenes/f.jpg",
+      imagen: "/imagenes/juegos/f.jpg",
       descripcion: "Final Fantasy XVI, lanzado en 2023 por Square Enix, es la decimosexta entrega principal de la serie. Ambientado en el mundo de Valisthea, el juego sigue a Clive Rosfield en una historia de venganza y destino. Con un sistema de combate en tiempo real y una narrativa madura, FF XVI marca un cambio hacia un tono más oscuro y político en la franquicia."
     },
     {
+      id: 5,
       titulo: "Diablo IV",
-      imagen: "/imagenes/diablo.jpg",
+      imagen: "/imagenes/juegos/diablo.jpg",
       descripcion: "Diablo IV, desarrollado por Blizzard Entertainment, es la cuarta entrega principal de la serie y fue lanzado en 2023. Ambientado en el mundo de Santuario, el juego presenta un estilo más oscuro y gótico, con un mundo abierto y cinco clases jugables. Ofrece una experiencia de acción y rol con énfasis en la personalización y el juego en línea."
     },
     {
+      id: 6,
       titulo: "Grand Theft Auto V",
-      imagen: "/imagenes/gta.jpg",
+      imagen: "/imagenes/juegos/gta.jpg",
       descripcion: "Grand Theft Auto V, desarrollado por Rockstar North y lanzado en 2013, es un juego de acción y aventura en mundo abierto. Ambientado en la ciudad ficticia de Los Santos, sigue las historias entrelazadas de tres protagonistas: Michael, Franklin y Trevor. Con una narrativa envolvente y un vasto mundo para explorar, GTA V ha sido aclamado por su profundidad y atención al detalle."
     },
     {
+      id: 7,
       titulo: "Elden Ring",
-      imagen: "/imagenes/e.jpg",
+      imagen: "/imagenes/juegos/e.jpg",
       descripcion: "Elden Ring, desarrollado por FromSoftware y publicado por Bandai Namco en 2022, es un juego de rol de acción en un mundo abierto. Creado en colaboración con George R. R. Martin, el juego ofrece una experiencia desafiante con un extenso lore y libertad de exploración. Su jugabilidad combina elementos de la serie Souls con nuevas mecánicas y un vasto entorno."
     },
     {
+      id: 8,
       titulo: "Super Smash Bros Ultimate",
-      imagen: "/imagenes/m.jpg",
+      imagen: "/imagenes/juegos/m.jpg",
       descripcion: "Super Smash Bros. Ultimate, lanzado en 2018 para Nintendo Switch, es un juego de lucha que reúne a personajes de diversas franquicias de videojuegos. Con más de 70 luchadores y numerosos escenarios, ofrece combates dinámicos y accesibles para jugadores de todos los niveles. Es celebrado por su contenido extenso y su homenaje a la historia de los videojuegos."
     },
     {
+      id: 9,
       titulo: "God of War Ragnarök",
-      imagen: "/imagenes/god.jpg",
+      imagen: "/imagenes/juegos/god.jpg",
       descripcion: "God of War Ragnarök, desarrollado por Santa Monica Studio y lanzado en 2022, continúa la saga de Kratos y su hijo Atreus en la mitología nórdica. El juego combina combates intensos con una narrativa emocional, explorando temas de paternidad y destino. Con gráficos impresionantes y una jugabilidad refinada, es una culminación épica de la historia iniciada en el reinicio de 2018."
     }
   ];
