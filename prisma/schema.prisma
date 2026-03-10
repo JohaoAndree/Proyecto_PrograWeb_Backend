@@ -22,6 +22,7 @@ model Usuario {
   pais           String
   foto           String?
   token          String?
+  tokenExpiry    DateTime?
   estado         Boolean        @default(true)
   ventas         Venta[]
   calificaciones Calificacion[]
@@ -38,26 +39,29 @@ model Noticia {
 model Venta {
   id          Int      @id @default(autoincrement())
   fecha       DateTime @default(now())
-  usuario     Usuario  @relation(fields: [usuarioId], references: [id])
+  usuario     Usuario  @relation(fields: [usuarioId], references: [id], onDelete: Restrict)
   usuarioId   Int
-  juego       Juego    @relation(fields: [juegoId], references: [id])
+  juego       Juego    @relation(fields: [juegoId], references: [id], onDelete: Restrict)
   juegoId     Int
   codigo      String
   montoPagado Float
+
+  @@index([usuarioId])
+  @@index([juegoId])
 }
 
 model Juego {
-  id             Int              @id @default(autoincrement())
+  id             Int               @id @default(autoincrement())
   nombre         String
   precio         Float
   descuento      String?
   foto           String?
-  estaOferta     Boolean          @default(false)
-  estado         Boolean          @default(true)
+  estaOferta     Boolean           @default(false)
+  estado         Boolean           @default(true)
   imagen         String?
   descripcion    String?
-  masVendido     Boolean          @default(false)
-  categoria      Categoria        @relation(fields: [categoriaId], references: [id])
+  masVendido     Boolean           @default(false)
+  categoria      Categoria         @relation(fields: [categoriaId], references: [id])
   categoriaId    Int
   ventas         Venta[]
   calificaciones Calificacion[]
@@ -68,23 +72,25 @@ model Calificacion {
   id         Int     @id @default(autoincrement())
   valoracion Int
   comentario String
-  juego      Juego   @relation(fields: [juegoId], references: [id])
+  juego      Juego   @relation(fields: [juegoId], references: [id], onDelete: Cascade)
   juegoId    Int
-  usuario    Usuario @relation(fields: [usuarioId], references: [id])
+  usuario    Usuario @relation(fields: [usuarioId], references: [id], onDelete: Cascade)
   usuarioId  Int
+
+  @@unique([juegoId, usuarioId])
 }
 
 model Plataforma {
-  id     Int              @id @default(autoincrement())
+  id     Int               @id @default(autoincrement())
   nombre String
   juegos JuegoPlataforma[]
 }
 
 model JuegoPlataforma {
   id           Int        @id @default(autoincrement())
-  juego        Juego      @relation(fields: [juegoId], references: [id])
+  juego        Juego      @relation(fields: [juegoId], references: [id], onDelete: Cascade)
   juegoId      Int
-  plataforma   Plataforma @relation(fields: [plataformaId], references: [id])
+  plataforma   Plataforma @relation(fields: [plataformaId], references: [id], onDelete: Cascade)
   plataformaId Int
 
   @@unique([juegoId, plataformaId])

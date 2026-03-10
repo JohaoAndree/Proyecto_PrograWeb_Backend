@@ -12,6 +12,6 @@ router.post('/registro', registrarUsuario);
 router.get('/masvendidos', obtenerJuegosMasVendidos);
 
 // === REQ8 ===
-router.get("/gerson/juegos-populares", cors(), obtenerJuegosPopulares);
+router.get("/juegos-populares", obtenerJuegosPopulares);
 
 export default router;

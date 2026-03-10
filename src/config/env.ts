@@ -6,4 +6,6 @@ export const env = {
   NODE_ENV: process.env.NODE_ENV || 'development',
   DATABASE_URL: process.env.DATABASE_URL || '',
   FRONTEND_URL: process.env.FRONTEND_URL || '',
+  EMAIL_USER: process.env.EMAIL_USER || '',
+  EMAIL_PASSWORD: process.env.EMAIL_PASSWORD || '',
 };

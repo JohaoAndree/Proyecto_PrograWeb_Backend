@@ -1,19 +1,19 @@
-import { PrismaClient } from '@prisma/client'; // ✅ correcto
 import { Request, Response } from 'express';
-
-const prisma = new PrismaClient();
+import { prisma } from '../../config/prisma';
+import { parseId } from '../../config/parseId';
+import type { CrearJuegoBody, EditarJuegoBody } from '../../types/request-bodies';
 
 
 export const obtenerJuegos = async (_req: Request, res: Response) => {
   const juegos = await prisma.juego.findMany({
-  where: { estado: true },
-  include: { categoria: true },
-});
+    where: { estado: true },
+    include: { categoria: true },
+  });
 
   res.json(juegos);
 };
 
-export const agregarJuego = async (req: Request, res: Response) => {
+export const agregarJuego = async (req: Request<{}, {}, CrearJuegoBody>, res: Response) => {
   const { nombre, precio, descripcion, categoriaId, descuento, foto, imagen } = req.body;
 
   // Asegúrate de convertir categoriaId a número
@@ -52,8 +52,9 @@ export const agregarJuego = async (req: Request, res: Response) => {
   }
 };
 
-export const editarJuego = async (req: Request, res: Response) => {
-  const id = Number(req.params.id);
+export const editarJuego = async (req: Request<{ id: string }, {}, EditarJuegoBody>, res: Response) => {
+  const juegoId = parseId(req.params.id);
+  if (!juegoId) return res.status(400).json({ mensaje: 'ID inválido' });
   const {
     nombre,
     precio,
@@ -65,7 +66,7 @@ export const editarJuego = async (req: Request, res: Response) => {
   } = req.body;
 
   try {
-    const data: any = {};
+    const data: Partial<{ nombre: string; precio: number; descripcion: string; descuento: string; foto: string; estado: boolean; categoria: { connect: { id: number } } }> = {};
 
     if (nombre !== undefined) data.nombre = nombre;
     if (precio !== undefined) data.precio = parseFloat(precio);
@@ -80,7 +81,7 @@ export const editarJuego = async (req: Request, res: Response) => {
     }
 
     const actualizado = await prisma.juego.update({
-      where: { id },
+      where: { id: juegoId },
       data,
     });
 
@@ -92,12 +93,14 @@ export const editarJuego = async (req: Request, res: Response) => {
 };
 
 export const eliminarJuego = async (req: Request, res: Response) => {
-  const id = Number(req.params.id);
+  const juegoId = parseId(req.params.id);
+  if (!juegoId) return res.status(400).json({ mensaje: 'ID inválido' });
+
   try {
     await prisma.juego.update({
-  where: { id },
-  data: { estado: false },
-});
+      where: { id: juegoId },
+      data: { estado: false },
+    });
     res.json({ mensaje: 'Juego eliminado' });
   } catch (error) {
     console.error(error);
@@ -116,11 +119,12 @@ export const obtenerCategorias = async (_req: Request, res: Response) => {
 };
 
 export const eliminarLogicamenteJuego = async (req: Request, res: Response) => {
-  const id = Number(req.params.id);
+  const juegoId = parseId(req.params.id);
+  if (!juegoId) return res.status(400).json({ mensaje: 'ID inválido' });
 
   try {
     const actualizado = await prisma.juego.update({
-      where: { id },
+      where: { id: juegoId },
       data: {
         estado: false,
       },

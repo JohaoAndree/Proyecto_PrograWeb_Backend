@@ -11,8 +11,8 @@ router.post("/registro", registrarUsuario)
 router.get("/juegos", obtenerListaJuegos)
 
 //req10
-router.post("carrito/agregar", agregarAlCarrito)
-router.get("carrito/:userID", obtenerCarrito)
+router.post("/carrito/agregar", agregarAlCarrito)
+router.get("/carrito/:userID", obtenerCarrito)
 
 router.get('/', getAllGames);
 

@@ -1,8 +1,9 @@
 import { Request, Response } from 'express';
-import { PrismaClient, Noticia} from '@prisma/client';
+import { Noticia } from '@prisma/client';
+import { prisma } from '../../config/prisma';
+import { parseId } from '../../config/parseId';
 import { subMonths, startOfMonth, format, isAfter } from 'date-fns';
-
-const prisma = new PrismaClient();
+import type { NoticiaBody } from '../../types/request-bodies';
 
 // Obtener todos los usuarios
 export const getAllUsuarios = async (_req: Request, res: Response) => {
@@ -46,7 +47,7 @@ export const getAllNoticias = async (_req: Request, res: Response) => {
 };
 
 // Crear una nueva noticia
-export const createNoticia = async (req: Request, res: Response) => {
+export const createNoticia = async (req: Request<{}, {}, NoticiaBody>, res: Response) => {
   try {
     const { nombre, descripcion } = req.body;
     const file = req.file;
@@ -79,15 +80,17 @@ export const createNoticia = async (req: Request, res: Response) => {
 };
 
 // Actualizar una noticia por ID
-export const updateNoticia = async (req: Request, res: Response) => {
-  const { id } = req.params;
+export const updateNoticia = async (req: Request<{ id: string }, {}, NoticiaBody>, res: Response) => {
+  const noticiaId = parseId(req.params.id);
+  if (!noticiaId) return res.status(400).json({ error: 'ID inválido' });
+
   const { nombre, descripcion } = req.body;
   const file = req.file;
 
   try {
     // Obtener la noticia actual
     const noticiaActual = await prisma.noticia.findUnique({
-      where: { id: Number(id) },
+      where: { id: noticiaId },
     });
 
     if (!noticiaActual) {
@@ -100,7 +103,7 @@ export const updateNoticia = async (req: Request, res: Response) => {
       : noticiaActual.foto;
 
     const noticiaActualizada = await prisma.noticia.update({
-      where: { id: Number(id) },
+      where: { id: noticiaId },
       data: {
         titulo: nombre,
         texto: descripcion,
@@ -122,11 +125,12 @@ export const updateNoticia = async (req: Request, res: Response) => {
 
 // Eliminar una noticia por ID
 export const deleteNoticia = async (req: Request, res: Response) => {
-  const { id } = req.params;
+  const noticiaId = parseId(req.params.id);
+  if (!noticiaId) return res.status(400).json({ error: 'ID inválido' });
 
   try {
     await prisma.noticia.update({
-      where: { id: Number(id) },
+      where: { id: noticiaId },
       data: { activo: false },
     });
 

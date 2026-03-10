@@ -1,17 +1,19 @@
-import { PrismaClient } from '@prisma/client'; // ✅ correcta
 import { Request, Response } from 'express';
+import { prisma } from '../../config/prisma';
+import { parseId } from '../../config/parseId';
 import bcrypt from 'bcrypt';
+import type { RegistroUsuarioBody, LoginUsuarioBody, ActualizarPerfilBody } from '../../types/request-bodies';
 
-const prisma = new PrismaClient();
-
-export const registrarUsuario = async (req: Request, res: Response) => {
+export const registrarUsuario = async (req: Request<{}, {}, RegistroUsuarioBody>, res: Response) => {
   try {
     const { correo, password, nombre, foto, pais } = req.body;
+
+    const hashedPassword = await bcrypt.hash(password, 10);
 
     const nuevoUsuario = await prisma.usuario.create({
       data: {
         correo: correo.trim().toLowerCase(),
-        password,
+        password: hashedPassword,
         nombre,
         foto,
         pais,
@@ -25,7 +27,7 @@ export const registrarUsuario = async (req: Request, res: Response) => {
   }
 };
 
-export const loginUsuario = async (req: Request, res: Response) => {
+export const loginUsuario = async (req: Request<{}, {}, LoginUsuarioBody>, res: Response) => {
   try {
     const { correo, password } = req.body;
 
@@ -64,8 +66,10 @@ export const loginUsuario = async (req: Request, res: Response) => {
 
 export const obtenerPerfil = async (req: Request, res: Response) => {
   try {
-    const { id } = req.params;
-    const usuario = await prisma.usuario.findUnique({ where: { id: Number(id) } });
+    const userId = parseId(req.params.id);
+    if (!userId) return res.status(400).json({ mensaje: 'ID inválido' });
+
+    const usuario = await prisma.usuario.findUnique({ where: { id: userId } });
 
     if (!usuario) {
       return res.status(404).json({ mensaje: 'Usuario no encontrado' });
@@ -78,13 +82,15 @@ export const obtenerPerfil = async (req: Request, res: Response) => {
   }
 };
 
-export const actualizarPerfil = async (req: Request, res: Response) => {
+export const actualizarPerfil = async (req: Request<{ id: string }, {}, ActualizarPerfilBody>, res: Response) => {
   try {
-    const { id } = req.params;
+    const userId = parseId(req.params.id);
+    if (!userId) return res.status(400).json({ mensaje: 'ID inválido' });
+
     const data = req.body;
 
     const usuario = await prisma.usuario.update({
-      where: { id: Number(id) },
+      where: { id: userId },
       data
     });
 

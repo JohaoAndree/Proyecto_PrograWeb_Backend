@@ -1,16 +1,13 @@
 import { Request, Response } from 'express';
-import { PrismaClient } from '@prisma/client';//npm install prisma @prisma/client
-import crypto from 'crypto';//npm install bcrypt
-import nodemailer from 'nodemailer';//npm install nodemailer
-import bcrypt from 'bcrypt'; // npm install --save-dev @types/bcrypt
+import { prisma } from '../../config/prisma';
+import crypto from 'crypto';
+import nodemailer from 'nodemailer';
+import bcrypt from 'bcrypt';
 import { env } from '../../config/env';
-
-
-
-const prisma = new PrismaClient();
+import type { RecuperarPasswordBody, NuevaClaveBody } from '../../types/request-bodies';
 
 // Recuperar contraseña - genera token y lo manda por correo
-const recuperar = async (req: Request, res: Response) => {
+const recuperar = async (req: Request<{}, {}, RecuperarPasswordBody>, res: Response) => {
   const { correo } = req.body;
 
   console.log("📨 Correo recibido:", correo);
@@ -34,10 +31,11 @@ const recuperar = async (req: Request, res: Response) => {
   }
 
   const token = crypto.randomBytes(32).toString('hex');
+  const tokenExpiry = new Date(Date.now() + 60 * 60 * 1000); // 1 hora
 
   await prisma.usuario.update({
     where: { id: usuario.id },
-    data: { token },
+    data: { token, tokenExpiry },
   });
 
   const link = `${env.FRONTEND_URL}/reset-password/${token}`;
@@ -45,13 +43,13 @@ const recuperar = async (req: Request, res: Response) => {
   const transporter = nodemailer.createTransport({
     service: 'gmail',
     auth: {
-      user: 'patrick.ch1429@gmail.com',
-      pass: 'ndkf saom dsfu nfdw', //  Usa un app password real en producción
+      user: env.EMAIL_USER,
+      pass: env.EMAIL_PASSWORD,
     },
   });
 
   await transporter.sendMail({
-    from: '"Soporte Juegos" <patrick.ch1429@gmail.com>',
+    from: `"Soporte Juegos" <${env.EMAIL_USER}>`,
     to: correoLimpio,
     subject: 'Recupera tu contraseña',
     html: `
@@ -66,7 +64,7 @@ const recuperar = async (req: Request, res: Response) => {
 };
 
 // Cambiar contraseña - usa el token para validar y actualizar la clave
-const nuevaClave = async (req: Request, res: Response) => {
+const nuevaClave = async (req: Request<{ token: string }, {}, NuevaClaveBody>, res: Response) => {
   const { nuevaClave } = req.body;
   const token = req.params.token;
 
@@ -83,8 +81,8 @@ const nuevaClave = async (req: Request, res: Response) => {
       where: { token },
     });
 
-    if (!usuario) {
-      console.log("❌ No se encontró un usuario con el token:", token);
+    if (!usuario || !usuario.tokenExpiry || usuario.tokenExpiry < new Date()) {
+      console.log("❌ Token inválido o expirado:", token);
       return res.status(400).json({ mensaje: "Token inválido o expirado." });
     }
 
@@ -96,6 +94,7 @@ const nuevaClave = async (req: Request, res: Response) => {
       data: {
         password: hash,
         token: null,
+        tokenExpiry: null,
       },
     });
 
@@ -109,35 +108,35 @@ const nuevaClave = async (req: Request, res: Response) => {
   }
 };
 
- /*const actualizarPerfil = async (req: Request, res: Response) => {
-  const { id } = req.params;
-  const { nombre, correo, foto } = req.body;
+/*const actualizarPerfil = async (req: Request, res: Response) => {
+ const { id } = req.params;
+ const { nombre, correo, foto } = req.body;
 
-  // Validación de campos obligatorios
-  if (!nombre || !correo) {
-    return res.status(400).json({ mensaje: "Nombre y correo son obligatorios." });
-  }
+ // Validación de campos obligatorios
+ if (!nombre || !correo) {
+   return res.status(400).json({ mensaje: "Nombre y correo son obligatorios." });
+ }
 
-  try {
-    
-    const dataToUpdate: any = { nombre, correo };
-    if (foto && foto.trim() !== "") {
-      dataToUpdate.foto = foto;
-    }
+ try {
 
-    const usuarioActualizado = await prisma.usuario.update({
-      where: { id: Number(id) },
-      data: dataToUpdate,
-    });
+   const dataToUpdate: any = { nombre, correo };
+   if (foto && foto.trim() !== "") {
+     dataToUpdate.foto = foto;
+   }
 
-    return res.status(200).json({
-      mensaje: "✅ Perfil actualizado correctamente.",
-      usuario: usuarioActualizado,
-    });
-  } catch (error) {
-    console.error("Error actualizando perfil:", error);
-    return res.status(500).json({ mensaje: "❌ Error al actualizar perfil." });
-  }
+   const usuarioActualizado = await prisma.usuario.update({
+     where: { id: Number(id) },
+     data: dataToUpdate,
+   });
+
+   return res.status(200).json({
+     mensaje: "✅ Perfil actualizado correctamente.",
+     usuario: usuarioActualizado,
+   });
+ } catch (error) {
+   console.error("Error actualizando perfil:", error);
+   return res.status(500).json({ mensaje: "❌ Error al actualizar perfil." });
+ }
 };*/
 // Exportación explícita al final
 export { recuperar, nuevaClave };

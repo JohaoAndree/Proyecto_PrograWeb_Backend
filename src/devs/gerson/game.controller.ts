@@ -1,18 +1,19 @@
-import { PrismaClient } from '@prisma/client';
 import { Request, Response } from 'express';
+import { prisma } from '../../config/prisma';
 import nodemailer from 'nodemailer';
-
-const prisma = new PrismaClient();
+import bcrypt from 'bcrypt';
+import { env } from '../../config/env';
+import type { RegistroUsuarioBody } from '../../types/request-bodies';
 const transporter = nodemailer.createTransport({
   service: 'gmail',
   auth: {
-    user: 'gerandreleon@gmail.com', // <-- cambia esto por tu correo real
-    pass: 'rura bczp ojzn uqvh', // <-- NO es tu clave normal, es la de aplicación
+    user: env.EMAIL_USER,
+    pass: env.EMAIL_PASSWORD,
   },
 });
 
 // === REQ3 ===
-export const registrarUsuario = async (req: Request, res: Response) => {
+export const registrarUsuario = async (req: Request<{}, {}, RegistroUsuarioBody>, res: Response) => {
   console.log("🔵 LLEGÓ A registrarUsuario");
 
 
@@ -37,36 +38,38 @@ export const registrarUsuario = async (req: Request, res: Response) => {
     }
 
     // ✅ Crear nuevo usuario
+    const hashedPassword = await bcrypt.hash(password, 10);
+
     const nuevoUsuario = await prisma.usuario.create({
       data: {
         nombre,
         correo,
         pais,
-        password,
+        password: hashedPassword,
       },
     });
 
     // ✅ Enviar correo
     const mailOptions = {
-  from: 'GameStore <gerandreleon@gmail.com>',
-  to: correo,
-  subject: `Hola ${nombre}`, // ✅ backticks
-  html: `
+      from: `GameStore <${env.EMAIL_USER}>`,
+      to: correo,
+      subject: `Hola ${nombre}`, // ✅ backticks
+      html: `
     <p>Hola ${nombre},</p>
     <p>Gracias por registrarte en <strong>DieguitoStore</strong>.</p>
     <p>Tu registro fue exitoso.</p>
     <p>Si no fuiste tú, ignora este mensaje.</p>
   `, // ✅ toda la plantilla HTML entre backticks
-};
+    };
 
 
     await transporter.sendMail(mailOptions);
     console.log("📧 Correo enviado a:", correo);
 
     return res.status(200).json({
-  mensaje: "Usuario registrado correctamente",
-  usuario: nuevoUsuario,
-});
+      mensaje: "Usuario registrado correctamente",
+      usuario: nuevoUsuario,
+    });
 
 
   } catch (error) {
