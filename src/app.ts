@@ -43,6 +43,15 @@ app.use(express.urlencoded({ limit: '10mb', extended: true }));
 // Rutas públicas para imágenes
 app.use('/imagenes', express.static(path.join(__dirname, '../public/imagenes')));
 
+// Ruta de salud / Health Check
+app.get('/', (_req: Request, res: Response) => {
+  res.status(200).json({ 
+    mensaje: "GameStore API is running! 🚀", 
+    estado: "Online",
+    version: "1.0.0"
+  });
+});
+
 // ENDPOINTS DE DESARROLLADORES
 app.use('/api/diego/games', diegoRoutes);
 app.use('/api/fabiana/games', fabianaRoutes);
