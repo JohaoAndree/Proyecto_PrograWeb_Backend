@@ -19,7 +19,6 @@ export interface CrearJuegoBody {
   descripcion?: string;
   categoriaId: string;
   descuento?: string;
-  foto?: string;
   imagen?: string;
 }
 
@@ -29,7 +28,7 @@ export interface EditarJuegoBody {
   descripcion?: string;
   categoriaId?: string;
   descuento?: string;
-  foto?: string;
+  imagen?: string;
   estado?: boolean;
 }
 

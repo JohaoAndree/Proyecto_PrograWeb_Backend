@@ -54,8 +54,7 @@ model Juego {
   id             Int               @id @default(autoincrement())
   nombre         String
   precio         Float
-  descuento      String?
-  foto           String?
+  descuento      Float?
   estaOferta     Boolean           @default(false)
   estado         Boolean           @default(true)
   imagen         String?
@@ -70,7 +69,7 @@ model Juego {
 
 model Calificacion {
   id         Int     @id @default(autoincrement())
-  valoracion Int
+  valoracion Float
   comentario String
   juego      Juego   @relation(fields: [juegoId], references: [id], onDelete: Cascade)
   juegoId    Int

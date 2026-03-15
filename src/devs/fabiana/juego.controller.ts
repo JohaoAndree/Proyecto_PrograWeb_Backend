@@ -14,7 +14,7 @@ export const obtenerJuegos = async (_req: Request, res: Response) => {
 };
 
 export const agregarJuego = async (req: Request<{}, {}, CrearJuegoBody>, res: Response) => {
-  const { nombre, precio, descripcion, categoriaId, descuento, foto, imagen } = req.body;
+  const { nombre, precio, descripcion, categoriaId, descuento, imagen } = req.body;
 
   // Asegúrate de convertir categoriaId a número
   const categoriaIdNumber = Number(categoriaId); // Definir correctamente
@@ -26,7 +26,7 @@ export const agregarJuego = async (req: Request<{}, {}, CrearJuegoBody>, res: Re
       descripcion,
       categoriaId,
       descuento,
-      foto
+      imagen
     });
 
     const nuevo = await prisma.juego.create({
@@ -34,8 +34,7 @@ export const agregarJuego = async (req: Request<{}, {}, CrearJuegoBody>, res: Re
         nombre,
         precio: parseFloat(precio),
         descripcion,
-        descuento,
-        foto,
+        descuento: descuento ? parseFloat(descuento) : null,
         imagen,
         estaOferta: false,
         estado: true,
@@ -61,18 +60,16 @@ export const editarJuego = async (req: Request<{ id: string }, {}, EditarJuegoBo
     descripcion,
     categoriaId,
     descuento,
-    foto,
     estado,
   } = req.body;
 
   try {
-    const data: Partial<{ nombre: string; precio: number; descripcion: string; descuento: string; foto: string; estado: boolean; categoria: { connect: { id: number } } }> = {};
+    const data: Partial<{ nombre: string; precio: number; descripcion: string; descuento: number | null; estado: boolean; categoria: { connect: { id: number } } }> = {};
 
     if (nombre !== undefined) data.nombre = nombre;
     if (precio !== undefined) data.precio = parseFloat(precio);
     if (descripcion !== undefined) data.descripcion = descripcion;
-    if (descuento !== undefined) data.descuento = descuento;
-    if (foto !== undefined) data.foto = foto;
+    if (descuento !== undefined) data.descuento = descuento ? parseFloat(descuento) : null;
     if (estado !== undefined) data.estado = estado;
     if (categoriaId !== undefined) {
       data.categoria = {
