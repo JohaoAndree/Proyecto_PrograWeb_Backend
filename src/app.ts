@@ -17,16 +17,21 @@ const app = express();
 
 // CORS restringido: solo el frontend puede hacer peticiones
 const allowedOrigins = [
-  env.FRONTEND_URL,
+  env.FRONTEND_URL?.toLowerCase().replace(/\/$/, ""),
   'http://localhost:5173',
 ].filter(Boolean);
 
 app.use(cors({
   origin: (origin: string | undefined, callback: (err: Error | null, allow?: boolean) => void) => {
-    // Permitir requests sin origin (Postman, curl, etc.)
-    if (!origin || allowedOrigins.includes(origin)) {
+    if (!origin) return callback(null, true);
+
+    // Normalizar origin de la petición (quitar slash final y pasar a minúsculas)
+    const normalizedOrigin = origin.toLowerCase().replace(/\/$/, "");
+
+    if (allowedOrigins.includes(normalizedOrigin)) {
       callback(null, true);
     } else {
+      console.warn(`[CORS] Origen denegado: ${origin}`);
       callback(new Error('Origen no permitido por CORS'));
     }
   },
