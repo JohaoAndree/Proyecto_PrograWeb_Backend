@@ -1,7 +1,23 @@
 -- Script para insertar los juegos en la base de datos
 -- Asegúrese de que la tabla 'Categoria' ya contenga los 14 géneros estándares con los IDs correspondientes.
 
-INSERT INTO "Juego" ("nombre", "precio", "descuento", "estaOferta", "imagen", "descripcion", "masVendido", "categoriaId") VALUES 
+INSERT INTO "Categoria" (nombre) VALUES
+('Acción'),
+('Acción-Aventura'),
+('Action RPG'),
+('Caza'),
+('Fantasía'),
+('FPS'),
+('Hack and Slash'),
+('Lucha'),
+('Mundo Abierto'),
+('Plataformas'),
+('Sigilo'),
+('Survival Horror'),
+('Terror psicológico'),
+('Western');
+
+INSERT INTO "Juego" ("nombre", "precio", "descuento", "estaOferta", "imagen", "descripcion", "masVendido", "categoriaId") VALUES
 ('Resident Evil 4 (Remake)', 199.90, 30.00, true, '/imagenes/juegos/Resident_Evil_4_Remake.png', 'Se trata de la reimaginación total del clásico de 2005 por parte de Capcom. Leon S. Kennedy se adentra en una aldea rural de España para rescatar a la hija del presidente de EE. UU., enfrentándose a hordas de enemigos infectados por Las Plagas.', false, 12),
 ('Call of Duty: Modern Warfare II', 249.90, NULL, false, '/imagenes/juegos/Call_of_Duty_Modern_Warfare_II.jpg', 'La secuela directa que trae de vuelta a la icónica Fuerza Operativa 141. Esta entrega ofrece una campaña frenética y realista que recorre el mundo intentando frustrar una amenaza global imparable.', true, 6),
 ('Final Fantasy XVI', 229.90, 15.50, true, '/imagenes/juegos/Final_Fantasy_XVI.jpg', 'Square Enix reinventa su franquicia más famosa con un tono más oscuro y maduro ambientado en Valisthea, un mundo que agoniza por la falta de éter. La historia sigue a Clive Rosfield en una travesía de venganza política y batallas colosales entre Eikons.', true, 3),
@@ -20,7 +36,7 @@ INSERT INTO "Juego" ("nombre", "precio", "descuento", "estaOferta", "imagen", "d
 ('Silent Hill f', 259.90, 10.00, true, '/imagenes/juegos/Silent_Hill_f.jpg', 'Escrito por Ryukishi07, esta entrega traslada el horror de Konami al Japón de los años 60. Se enfoca en un terror floral y decadente.', false, 13),
 ('DOOM: The Dark Ages', 249.90, NULL, false, '/imagenes/juegos/DOOM_The_Dark_Ages.jpg', 'La precuela que narra el origen crudo y medieval del Doom Slayer. id Software sustituye la velocidad vertical de Eternal por un combate terrestre opresivo y brutal.', false, 6),
 ('Monster Hunter Wilds', 269.90, NULL, false, '/imagenes/juegos/Monster_Hunter_Wilds.jpg', 'Capcom lleva la caza a un nuevo nivel con ecosistemas dinámicos donde el clima y la fauna cambian en tiempo real.', false, 4),
-('Stellar Blade', 259.90, 25.00, true, '/imagenes/juegos/Stellar_Blade.png', 'Un espectacular título de acción surcoreano exclusivo de PlayStation. Controlas a Eve, una guerrera que desciende a una Tierra en ruinas para enfrentar a los Naytibas.', false, 7);
+('Stellar Blade', 259.90, 25.00, true, '/imagenes/juegos/Stellar_Blade.jpeg', 'Un espectacular título de acción surcoreano exclusivo de PlayStation. Controlas a Eve, una guerrera que desciende a una Tierra en ruinas para enfrentar a los Naytibas.', false, 7);
 
 -- 2. Insertar Plataformas Únicas
 INSERT INTO "Plataforma" ("nombre") VALUES

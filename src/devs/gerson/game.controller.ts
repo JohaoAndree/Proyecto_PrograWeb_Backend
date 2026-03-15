@@ -112,7 +112,7 @@ export const obtenerJuegosMasVendidos = (_req: Request, res: Response) => {
     {
       id: 4,
       titulo: "Final Fantasy XVI",
-      genero: "RPG de acción, Fantasía",
+      genero: "Action RPG, Fantasía",
       plataforma: ["PS5", "PC"],
       imagen: "/imagenes/juegos_mas_vendidos/Final_Fantasy_XVI.jpg",
       descripcion: "Square Enix reinventa su franquicia más famosa con un tono más oscuro y maduro ambientado en Valisthea, un mundo que agoniza por la falta de éter. La historia sigue a Clive Rosfield en una travesía de venganza política y batallas colosales entre Eikons, utilizando un sistema de combate en tiempo real diseñado por Ryota Suzuki que prioriza la velocidad y el espectáculo visual.",
@@ -139,7 +139,7 @@ export const obtenerJuegosMasVendidos = (_req: Request, res: Response) => {
     {
       id: 7,
       titulo: "Elden Ring",
-      genero: "Acción RPG, Mundo Abierto",
+      genero: "Action RPG, Mundo Abierto",
       plataforma: ["PC", "PS5", "PS4", "Xbox Series X/S", "Xbox One"],
       imagen: "/imagenes/juegos_mas_vendidos/Elden_Ring.jpg",
       descripcion: "Fruto de la colaboración entre FromSoftware y George R.R. Martin, Elden Ring lleva la fórmula 'Soulslike' a un mundo abierto de proporciones legendarias. Los jugadores recorren las Tierras Intermedias enfrentando dioses y semidioses, con una libertad total para abordar los desafíos, descubrir secretos ocultos y forjar su propio camino para convertirse en el Círculo de Elden.",
@@ -180,7 +180,7 @@ export const obtenerJuegosPopulares = (req: Request, res: Response) => {
     },
     {
       titulo: "Cyberpunk 2077",
-      genero: "RPG de acción, FPS",
+      genero: "Action RPG, FPS",
       plataforma: ["PC", "PS5", "Xbox Series X/S", "PS4", "Xbox One"],
       imagen: "/imagenes/juegos_mas_populares/Cyberpunk_2077.jpg",
       descripcion: "CD Projekt RED presenta un RPG de acción en mundo abierto ambientado en Night City, una megalópolis obsesionada con el poder y las mejoras corporales. El jugador encarna a V, un mercenario que busca un implante único que es la clave de la inmortalidad.",
@@ -188,7 +188,7 @@ export const obtenerJuegosPopulares = (req: Request, res: Response) => {
     },
     {
       titulo: "The Witcher 3: Wild Hunt",
-      genero: "RPG de acción, Fantasía",
+      genero: "Action RPG, Fantasía",
       plataforma: ["PC", "PS5", "Xbox Series X/S", "PS4", "Xbox One", "Nintendo Switch"],
       imagen: "/imagenes/juegos_mas_populares/The_Witcher_3_Wild_Hunt.png",
       descripcion: "En esta conclusión de la saga de Geralt de Rivia, los jugadores exploran un mundo de fantasía oscura devastado por la guerra mientras buscan a Ciri, la niña de la profecía. Un juego donde cada elección tiene consecuencias reales en un mapa vasto y lleno de folclore.",
@@ -223,12 +223,12 @@ export const obtenerJuegosPopulares = (req: Request, res: Response) => {
       genero: "FPS, Acción",
       plataforma: ["PC", "PS5", "Xbox Series X/S"],
       imagen: "/imagenes/juegos_mas_populares/DOOM_The_Dark_Ages.jpg",
-      descripcion: "id Software presenta una precuela inspirada en la era medieval, narrando los orígenes de la furia del Doom Slayer. Con un combate que incluye un escudo-sierra y armas brutales, el juego ofrece una experiencia de acción frenética en una guerra entre dioses y demonios.",
+      descripcion: "Id Software presenta una precuela inspirada en la era medieval, narrando los orígenes de la furia del Doom Slayer. Con un combate que incluye un escudo-sierra y armas brutales, el juego ofrece una experiencia de acción frenética en una guerra entre dioses y demonios.",
       valoracion: "La comunidad ha reaccionado con euforia, destacando el diseño visual que recuerda al metal clásico. Los fans lo describen como un 'regreso a las raíces de la carnicería' con una ambientación gótica sombría y satisfactoria. ★★★★☆ 9/10"
     },
     {
       titulo: "Monster Hunter Wilds",
-      genero: "Acción RPG, Caza",
+      genero: "Action RPG, Caza",
       plataforma: ["PC", "PS5", "Xbox Series X/S"],
       imagen: "/imagenes/juegos_mas_populares/Monster_Hunter_Wilds.jpg",
       descripcion: "Capcom lleva la caza a un nuevo nivel con ecosistemas dinámicos donde el clima y la fauna cambian en tiempo real. Con monturas más ágiles y un mundo sin costuras, los jugadores deben adaptarse a las Tierras Prohibidas para sobrevivir a manadas de monstruos inteligentes.",

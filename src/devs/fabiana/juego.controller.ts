@@ -7,7 +7,11 @@ import type { CrearJuegoBody, EditarJuegoBody } from '../../types/request-bodies
 export const obtenerJuegos = async (_req: Request, res: Response) => {
   const juegos = await prisma.juego.findMany({
     where: { estado: true },
-    include: { categoria: true },
+    include: {
+      categoria: true,
+      calificaciones: true,
+      plataformas: { include: { plataforma: true } }
+    },
   });
 
   res.json(juegos);
