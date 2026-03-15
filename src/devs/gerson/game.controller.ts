@@ -96,7 +96,7 @@ export const obtenerJuegosMasVendidos = (_req: Request, res: Response) => {
       titulo: "Resident Evil 4 (Remake)",
       genero: "Survival Horror, Acción",
       plataforma: ["PC", "PS5", "PS4", "Xbox Series X/S"],
-      imagen: "/imagenes/juegos_mas_vendidos/Resident_Evil_4_Remake.jpg",
+      imagen: "/imagenes/juegos_mas_vendidos/Resident_Evil_4_Remake.png",
       descripcion: "Se trata de la reimaginación total del clásico de 2005 por parte de Capcom. Leon S. Kennedy se adentra en una aldea rural de España para rescatar a la hija del presidente de EE. UU., enfrentándose a hordas de enemigos infectados por Las Plagas. Esta versión moderniza las mecánicas de disparo, el movimiento y la narrativa, manteniendo la esencia de terror y tensión constante del original.",
       valoracion: "Aclamado como uno de los mejores remakes de la historia, la comunidad destaca la fluidez del combate y la profundidad añadida a personajes secundarios. Los fans valoran que logra sentirse fresco y aterrador incluso para quienes jugaron la versión clásica, manteniendo un ritmo magistral de principio a fin. ★★★★★ 9.5/10"
     },
@@ -190,7 +190,7 @@ export const obtenerJuegosPopulares = (req: Request, res: Response) => {
       titulo: "The Witcher 3: Wild Hunt",
       genero: "RPG de acción, Fantasía",
       plataforma: ["PC", "PS5", "Xbox Series X/S", "PS4", "Xbox One", "Nintendo Switch"],
-      imagen: "/imagenes/juegos_mas_populares/The_Witcher_3_Wild_Hunt.jpg",
+      imagen: "/imagenes/juegos_mas_populares/The_Witcher_3_Wild_Hunt.png",
       descripcion: "En esta conclusión de la saga de Geralt de Rivia, los jugadores exploran un mundo de fantasía oscura devastado por la guerra mientras buscan a Ciri, la niña de la profecía. Un juego donde cada elección tiene consecuencias reales en un mapa vasto y lleno de folclore.",
       valoracion: "Es ampliamente aclamado por sus misiones secundarias, que tienen tanta calidad como la trama principal. Los fans lo consideran el RPG definitivo por su excelente escritura, carisma de personajes y un diseño de mundo impecable. ★★★★★ 10/10"
     },
