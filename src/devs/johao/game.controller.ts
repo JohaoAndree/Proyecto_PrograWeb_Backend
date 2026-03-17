@@ -179,3 +179,37 @@ export const getGanancias = async (_req: Request, res: Response) => {
     res.status(500).json({ error: 'Error al calcular ganancias por mes' });
   }
 };
+
+// Obtener cantidad total de ventas
+export const countVentas = async (_req: Request, res: Response) => {
+  try {
+    const count = await prisma.venta.count();
+    res.json({ totalVentas: count });
+  } catch (error) {
+    res.status(500).json({ error: 'Error al contar ventas' });
+  }
+};
+
+// Obtener el perfil del administrador por nombre
+export const getAdminProfile = async (_req: Request, res: Response) => {
+  try {
+    const admin = await prisma.usuario.findFirst({
+      where: { nombre: 'Administrador' },
+    });
+
+    if (!admin) {
+      return res.status(404).json({ error: 'Administrador no encontrado' });
+    }
+
+    // Asegurar que devuelva la foto del admin si existe o una por defecto
+    const profile = {
+      ...admin,
+      foto: admin.foto || 'avatarAdmin.jpg'
+    };
+
+    res.json(profile);
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: 'Error al obtener el perfil del administrador' });
+  }
+};
