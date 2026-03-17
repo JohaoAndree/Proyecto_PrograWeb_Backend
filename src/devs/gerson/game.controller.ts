@@ -4,6 +4,38 @@ import nodemailer from 'nodemailer';
 import bcrypt from 'bcrypt';
 import { env } from '../../config/env';
 import type { RegistroUsuarioBody } from '../../types/request-bodies';
+import multer from 'multer';
+import path from 'path';
+import fs from 'fs';
+
+// Configuración de Multer para fotos de perfil de usuario
+const storage = multer.diskStorage({
+  destination: (_req, _file, cb) => {
+    const dir = path.join(__dirname, '../../../public/imagenes/usuario');
+    if (!fs.existsSync(dir)) {
+      fs.mkdirSync(dir, { recursive: true });
+    }
+    cb(null, dir);
+  },
+  filename: (_req, file, cb) => {
+    const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1e9);
+    cb(null, 'user-' + uniqueSuffix + path.extname(file.originalname));
+  },
+});
+
+export const uploadUserPhoto = multer({
+  storage,
+  limits: { fileSize: 5 * 1024 * 1024 }, // 5MB
+  fileFilter: (_req, file, cb) => {
+    const allowedTypes = ['image/jpeg', 'image/png', 'image/webp'];
+    if (allowedTypes.includes(file.mimetype)) {
+      cb(null, true);
+    } else {
+      cb(new Error('Solo se permiten imágenes JPEG, PNG o WEBP'));
+    }
+  },
+});
+
 const transporter = nodemailer.createTransport({
   service: 'gmail',
   auth: {
@@ -13,11 +45,8 @@ const transporter = nodemailer.createTransport({
 });
 
 // === REQ3 ===
-export const registrarUsuario = async (req: Request<{}, {}, RegistroUsuarioBody>, res: Response) => {
+export const registrarUsuario = async (req: Request, res: Response) => {
   console.log("🔵 LLEGÓ A registrarUsuario");
-
-
-  console.log("🎯 Entró al endpoint /registro");
   console.log("BODY RECIBIDO EN BACKEND:", req.body);
 
   const { nombre, correo, pais, password } = req.body;
@@ -34,7 +63,12 @@ export const registrarUsuario = async (req: Request<{}, {}, RegistroUsuarioBody>
 
     if (existente) {
       return res.status(409).json({ mensaje: "El correo ya está registrado", msg: "El correo ya está registrado" });
+    }
 
+    // ✅ Procesar foto si existe
+    let fotoPath = null;
+    if (req.file) {
+      fotoPath = `/imagenes/usuario/${req.file.filename}`;
     }
 
     // ✅ Crear nuevo usuario
@@ -46,6 +80,7 @@ export const registrarUsuario = async (req: Request<{}, {}, RegistroUsuarioBody>
         correo,
         pais,
         password: hashedPassword,
+        foto: fotoPath,
       },
     });
 
@@ -53,29 +88,34 @@ export const registrarUsuario = async (req: Request<{}, {}, RegistroUsuarioBody>
     const mailOptions = {
       from: `GameStore <${env.EMAIL_USER}>`,
       to: correo,
-      subject: `Hola ${nombre}`, // ✅ backticks
+      subject: `¡Bienvenido a GameStore, ${nombre}!`,
       html: `
-    <p>Hola ${nombre},</p>
-    <p>Gracias por registrarte en <strong>GameStore</strong>.</p>
-    <p>Tu registro fue exitoso.</p>
-    <p>Si no fuiste tú, ignora este mensaje.</p>
-  `, // ✅ toda la plantilla HTML entre backticks
+        <div style="font-family: sans-serif; max-width: 600px; margin: auto; padding: 20px; border: 1px solid #eee; border-radius: 10px;">
+          <h2 style="color: #00AEEF;">¡Hola ${nombre}!</h2>
+          <p>Gracias por registrarte en <strong>GameStore</strong>.</p>
+          <p>Tu cuenta ha sido creada exitosamente. Ahora puedes entrar y disfrutar de nuestra colección de juegos.</p>
+          ${fotoPath ? `<p>Hemos guardado tu foto de perfil correctamente.</p>` : ''}
+          <p>Si no fuiste tú quien realizó este registro, por favor ignora este mensaje.</p>
+          <br>
+          <p>Atentamente,<br>Equipo GameStore</p>
+        </div>
+      `,
     };
-
 
     await transporter.sendMail(mailOptions);
     console.log("📧 Correo enviado a:", correo);
 
     return res.status(200).json({
       mensaje: "Usuario registrado correctamente",
+      msg: "¡Registro exitoso! Bienvenido a GameStore.",
       usuario: nuevoUsuario,
     });
-
 
   } catch (error) {
     console.error("Error al registrar usuario:", error);
     return res.status(500).json({
       mensaje: "Error al registrar usuario",
+      error: error instanceof Error ? error.message : "Error desconocido"
     });
   }
 };
