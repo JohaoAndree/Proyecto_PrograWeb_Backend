@@ -90,15 +90,48 @@ export const registrarUsuario = async (req: Request, res: Response) => {
       to: correo,
       subject: `¡Bienvenido a GameStore, ${nombre}!`,
       html: `
-        <div style="font-family: sans-serif; max-width: 600px; margin: auto; padding: 20px; border: 1px solid #eee; border-radius: 10px;">
-          <h2 style="color: #00AEEF;">¡Hola ${nombre}!</h2>
-          <p>Gracias por registrarte en <strong>GameStore</strong>.</p>
-          <p>Tu cuenta ha sido creada exitosamente. Ahora puedes entrar y disfrutar de nuestra colección de juegos.</p>
-          ${fotoPath ? `<p>Hemos guardado tu foto de perfil correctamente.</p>` : ''}
-          <p>Si no fuiste tú quien realizó este registro, por favor ignora este mensaje.</p>
-          <br>
-          <p>Atentamente,<br>Equipo GameStore</p>
-        </div>
+        <!doctype html>
+            <html>
+            <head>
+              <meta charset="utf-8" />
+              <meta name="viewport" content="width=device-width,initial-scale=1" />
+              <link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;600;700&display=swap" rel="stylesheet">
+              <title>Bienvenido a GameStore</title>
+            </head>
+            <body style="margin:0;background:linear-gradient(180deg,#030313 0%, #0b0e1a 100%);font-family: 'Fira Code', monospace;color:#E2E8F0;padding: 20px;">
+              <div style="max-width:600px;margin:20px auto;padding:32px;border-radius:24px;background:linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01));border:1px solid rgba(0,209,255,0.1);box-shadow:0 15px 35px rgba(0,0,0,0.4);">
+
+                <header style="text-align:center;margin-bottom:32px;">
+                  <h2 style="margin:0;color:#00D1FF;font-size:24px;font-weight:700;letter-spacing:-0.02em;">
+                    ¡Bienvenido a GameStore, ${nombre}!
+                  </h2>
+                  <div style="font-size:14px;color:#94A3B8;margin-top:8px;text-transform:uppercase;letter-spacing:0.1em;">
+                    Cuenta creada exitosamente
+                  </div>
+                </header>
+
+                <main style="text-align:center;">
+                  <p style="margin:0 0 20px 0;color:#cbd5e1;line-height:1.6;font-size:16px;">
+                    Gracias por registrarte en <strong style="color:#fff">GameStore</strong>. <br/>
+                    Ya puedes acceder y disfrutar de nuestra gran colección de juegos.
+                  </p>
+
+                  <p style="margin:0 0 32px 0;color:#64748b;font-size:13px;line-height:1.5;">
+                    Si no fuiste tú quien realizó este registro, por favor ignora este mensaje o contacta con nuestro equipo de soporte.
+                  </p>
+
+                  <a href="${env.FRONTEND_URL || '/'}" style="display:inline-block;padding:14px 28px;border-radius:12px;background:linear-gradient(90deg,#00D1FF,#3a7bd5);color:#071126;font-weight:700;text-decoration:none;font-size:16px;box-shadow: 0 4px 15px rgba(0,209,255,0.3);">
+                    Explorar la Tienda
+                  </a>
+                </main>
+
+                <footer style="margin-top:40px;border-top:1px solid rgba(226,232,240,0.05);padding-top:24px;color:#94A3B8;font-size:13px;text-align:center;">
+                  <div style="margin-bottom:4px;">Atentamente,</div>
+                  <div style="font-weight:700;color:#00D1FF;">Equipo GameStore</div>
+                </footer>
+              </div>
+            </body>
+            </html>
       `,
     };
 
